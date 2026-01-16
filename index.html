@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS | SPECIAL AIR SERVICE</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sas-blue: #3b82f6;
+            --sas-red: #dc2626;
+            --sas-dark-red: #7f1d1d;
+            --tactical-black: #050505;
+            --panel-bg: #0a0a0a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: var(--sas-red);
+            color: white;
+        }
+
+        body {
+            background-color: var(--tactical-black);
+            color: #e5e7eb;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+            opacity: 0;
+            animation: pageFadeIn 1s ease-out forwards;
+        }
+
+        @keyframes pageFadeIn {
+            to { opacity: 1; }
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Black Ops One', cursive;
+            letter-spacing: 0.05em;
+        }
+
+        .tech-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--sas-red);
+        }
+
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--sas-red);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate3d(-50%, -50%, 0);
+            z-index: 9999;
+            will-change: transform;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glitch-text {
+            position: relative;
+            color: white;
+            z-index: 1;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent; /* Changed from var(--tactical-black) to transparent */
+        }
+
+        /* CHANGED: More aggressive glitch settings */
+        .glitch-text::before {
+            color: #0ff;
+            z-index: -1;
+            transform: translate(-4px, 0);
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            color: #f00;
+            z-index: -2;
+            transform: translate(4px, 0);
+            animation: glitch-anim-2 2s infinite linear alternate-reverse;
+        }
+
+        /* CHANGED: Larger translate values and sharper clip-paths */
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-10px, 2px); }
+            10% { clip-path: inset(60% 0 10% 0); transform: translate(10px, -2px); }
+            20% { clip-path: inset(40% 0 50% 0); transform: translate(-8px, 4px); }
+            30% { clip-path: inset(80% 0 5% 0); transform: translate(8px, -4px); }
+            40% { clip-path: inset(10% 0 60% 0); transform: translate(-4px, 2px); }
+            50% { clip-path: inset(30% 0 40% 0); transform: translate(4px, -2px); }
+            60% { clip-path: inset(15% 0 50% 0); transform: translate(-10px, 0px); }
+            70% { clip-path: inset(60% 0 10% 0); transform: translate(0px, 10px); }
+            100% { clip-path: inset(40% 0 43% 0); transform: translate(5px, -5px); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); transform: translate(10px, -2px); }
+            10% { clip-path: inset(80% 0 5% 0); transform: translate(-10px, 4px); }
+            20% { clip-path: inset(30% 0 20% 0); transform: translate(5px, -4px); }
+            30% { clip-path: inset(10% 0 80% 0); transform: translate(-5px, 2px); }
+            40% { clip-path: inset(50% 0 30% 0); transform: translate(10px, 2px); }
+            50% { clip-path: inset(20% 0 70% 0); transform: translate(-10px, -2px); }
+            60% { clip-path: inset(70% 0 10% 0); transform: translate(5px, 5px); }
+            100% { clip-path: inset(0% 0 90% 0); transform: translate(-5px, -5px); }
+        }
+
+        .stat-card {
+            background-color: var(--panel-bg);
+            border: 1px solid #222;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--sas-red);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.1);
+        }
+
+        .discord-btn {
+            background-color: #5865F2;
+            transition: all 0.3s ease;
+        }
+        
+        .discord-btn:hover {
+            background-color: #4752C4;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
+        }
+
+        .ticker-wrap {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            overflow: hidden;
+            height: 25px;
+            background-color: #000;
+            border-top: 1px solid #333;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 40s linear infinite;
+            will-change: transform;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 2rem;
+            font-size: 0.75rem;
+            color: #888;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .propaganda-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
+            background: #000;
+            aspect-ratio: 16/9;
+            transition: all 0.3s ease;
+        }
+
+        .propaganda-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            transition: all 0.4s ease;
+        }
+
+        .propaganda-card:hover .propaganda-img {
+            transform: scale(1.05);
+        }
+
+        .scanline-overlay {
+            display: none; 
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg) scale(0.8);
+            border: 4px solid var(--sas-red);
+            color: var(--sas-red);
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.5rem;
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            text-shadow: 0 0 10px black;
+            background: rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+
+        .propaganda-card:hover .stamp {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(-10deg) scale(1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+
+    <div class="vignette"></div>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">SYSTEM: OPTIMIZED</div>
+            <div class="ticker-item">STATUS: RECRUITING</div>
+            <div class="ticker-item">SOUTH LONDON REMASTERED</div>
+            <div class="ticker-item">DIVISION: SPECIAL AIR SERVICE</div>
+            <div class="ticker-item">DISCIPLINE IS PARAMOUNT</div>
+            <div class="ticker-item">RESPECT THE CHAIN OF COMMAND</div>
+        </div>
+    </div>
+
+    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center bg-black border-b border-gray-900 transition-all duration-300">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-dragon text-red-600 text-2xl"></i>
+            <span class="brand-font text-xl text-white tracking-wider">SAS <span class="text-red-600 text-xs font-sans align-top ml-1">SLR</span></span>
+        </div>
+        <div class="hidden md:flex gap-8 font-bold text-sm tracking-widest text-gray-500">
+            <a href="#intel" class="hover:text-white transition-colors duration-300">INTEL</a>
+            <a href="#propaganda" class="hover:text-white transition-colors duration-300">ARCHIVE</a>
+            <a href="#operations" class="hover:text-white transition-colors duration-300">OPS</a>
+            <a href="#requirements" class="hover:text-white transition-colors duration-300">JOIN</a>
+        </div>
+        <a href="https://discord.gg/ZRbjcEJw9E" target="_blank" class="bg-red-800 hover:bg-red-700 text-white px-5 py-2 rounded-sm font-bold text-xs tracking-wider transition-all duration-300 hover:scale-105">
+            DISCORD
+        </a>
+    </nav>
+
+    <section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-10">
+        
+        <div class="absolute inset-0 z-0">
+            <img src="5.png" onerror="this.src='https://images.unsplash.com/photo-1605218427306-022ba8c69c3a?q=80&w=2070&auto=format&fit=crop'" class="w-full h-full object-cover opacity-40">
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/60"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <div class="inline-flex items-center gap-2 border border-red-900 bg-black/80 px-4 py-1 mb-6 rounded text-red-500 text-xs font-bold tracking-widest fade-in-up">
+                <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> ELITE DIVISION
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl mb-2 text-white glitch-text fade-in-up tech-font" data-text="SAS UNIT">
+                SAS UNIT
+            </h1>
+            
+            <h2 class="text-xl md:text-2xl text-gray-300 mb-8 brand-font fade-in-up">
+                SOUTH LONDON REMASTERED
+            </h2>
+            
+            <p class="text-base md:text-lg text-gray-300 mb-10 max-w-xl mx-auto font-light fade-in-up leading-relaxed text-shadow-sm">
+                We provide the highest level of tactical enforcement in SLR. <br>
+                Precise. Professional. Lethal.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center fade-in-up">
+                <a href="https://discord.gg/ZRbjcEJw9E" target="_blank" class="discord-btn px-8 py-3 text-white font-bold tracking-widest flex items-center gap-3 rounded text-sm shadow-lg shadow-blue-900/20">
+                    <i class="fa-brands fa-discord text-lg"></i> ENLIST NOW
+                </a>
+                <a href="#requirements" class="border border-gray-500 hover:border-red-600 text-gray-300 hover:text-white hover:bg-black/50 px-8 py-3 rounded font-bold tracking-widest transition-colors uppercase text-sm backdrop-blur-sm">
+                    Requirements
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="intel" class="py-20 px-6 relative z-10 bg-black border-t border-gray-900">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl text-white mb-6 tech-font">
+                        UNIT <span class="text-red-600">INTEL</span>
+                    </h2>
+                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                        The Special Air Service (SAS) is the premier special forces unit within South London Remastered. We operate autonomously from standard police divisions, handling high-risk threats that require specialized intervention.
+                    </p>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                        Our members are handpicked for their combat efficiency, game knowledge, and ability to follow strict rules of engagement. We prioritize quality over quantity.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-8">
+                        <div class="bg-zinc-900 p-4 border-l-2 border-blue-600">
+                            <div class="text-2xl font-bold text-white mb-1">Elite</div>
+                            <div class="text-xs text-gray-500 uppercase">Classification</div>
+                        </div>
+                        <div class="bg-zinc-900 p-4 border-l-2 border-red-600">
+                            <div class="text-2xl font-bold text-white mb-1">High</div>
+                            <div class="text-xs text-gray-500 uppercase">Clearance</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4 reveal">
+                    <div class="stat-card p-6 flex items-start gap-4">
+                        <div class="text-red-600 text-2xl"><i class="fa-solid fa-users-viewfinder"></i></div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">Squad Tactics</h3>
+                            <p class="text-gray-500 text-xs leading-relaxed">We move as a unit. Communication and covering fire are standard procedure during engagements.</p>
+                        </div>
+                    </div>
+                    <div class="stat-card p-6 flex items-start gap-4">
+                        <div class="text-red-600 text-2xl"><i class="fa-solid fa-ranking-star"></i></div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">Reputation</h3>
+                            <p class="text-gray-500 text-xs leading-relaxed">Known throughout the server for having the best aimers and strategic players.</p>
+                        </div>
+                    </div>
+                    <div class="stat-card p-6 flex items-start gap-4">
+                        <div class="text-red-600 text-2xl"><i class="fa-solid fa-gavel"></i></div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">Justice</h3>
+                            <p class="text-gray-500 text-xs leading-relaxed">We enforce server rules strictly but fairly. No abuse of power is tolerated.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="propaganda" class="py-20 px-6 relative z-10 bg-[#080808]">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12 reveal">
+                <span class="text-red-600 tracking-widest text-xs font-bold uppercase">Declassified Footage</span>
+                <h2 class="text-3xl text-white mt-2 tech-font">WARFARE ARCHIVE</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="propaganda-card reveal">
+                    <div class="scanline-overlay"></div>
+                    <div class="stamp">RAID SUCCESS</div>
+                    <img src="1.png" onerror="this.src='https://placehold.co/600x400/1a1a1a/dc2626?text=MISSING:+Save+Image+As+1.png'" alt="Propaganda 1" class="propaganda-img">
+                    <div class="absolute bottom-2 left-2 text-[10px] text-red-500 font-mono z-10">CAM_04 // SECTOR 9</div>
+                </div>
+
+                <div class="propaganda-card reveal" style="transition-delay: 0.1s;">
+                    <div class="scanline-overlay"></div>
+                    <div class="stamp">CONFIRMED KILL</div>
+                    <img src="2.png" onerror="this.src='https://placehold.co/600x400/1a1a1a/dc2626?text=MISSING:+Save+Image+As+2.png'" alt="Propaganda 2" class="propaganda-img">
+                    <div class="absolute bottom-2 left-2 text-[10px] text-red-500 font-mono z-10">CAM_01 // BREACH</div>
+                </div>
+
+                <div class="propaganda-card reveal" style="transition-delay: 0.2s;">
+                    <div class="scanline-overlay"></div>
+                    <div class="stamp">TARGET DOWN</div>
+                    <img src="3.png" onerror="this.src='https://placehold.co/600x400/1a1a1a/dc2626?text=MISSING:+Save+Image+As+3.png'" alt="Propaganda 3" class="propaganda-img">
+                    <div class="absolute bottom-2 left-2 text-[10px] text-red-500 font-mono z-10">CAM_07 // OVERWATCH</div>
+                </div>
+
+                <div class="propaganda-card reveal" style="transition-delay: 0.3s;">
+                    <div class="scanline-overlay"></div>
+                    <div class="stamp">AREA SECURED</div>
+                    <img src="4.png" onerror="this.src='https://placehold.co/600x400/1a1a1a/dc2626?text=MISSING:+Save+Image+As+4.png'" alt="Propaganda 4" class="propaganda-img">
+                    <div class="absolute bottom-2 left-2 text-[10px] text-red-500 font-mono z-10">CAM_02 // PATROL</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="operations" class="py-20 px-6 relative z-10 bg-black">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12 reveal">
+                <span class="text-red-600 tracking-widest text-xs font-bold uppercase">Mission Scope</span>
+                <h2 class="text-3xl text-white mt-2 tech-font">ACTIVE OPERATIONS</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="stat-card p-6 reveal">
+                    <div class="text-blue-500 text-3xl mb-4"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <h3 class="text-lg text-white font-bold mb-2">Area Control</h3>
+                    <p class="text-gray-500 text-sm">Securing high-traffic zones and locking down criminal hotspots to ensure server stability.</p>
+                </div>
+
+                <div class="stat-card p-6 reveal" style="transition-delay: 0.1s;">
+                    <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-skull-crossbones"></i></div>
+                    <h3 class="text-lg text-white font-bold mb-2">Raids</h3>
+                    <p class="text-gray-500 text-sm">Coordinated strikes on gang compounds. Precision entry and clearing tactics required.</p>
+                </div>
+
+                <div class="stat-card p-6 reveal" style="transition-delay: 0.2s;">
+                    <div class="text-yellow-500 text-3xl mb-4"><i class="fa-solid fa-user-shield"></i></div>
+                    <h3 class="text-lg text-white font-bold mb-2">VIP Protection</h3>
+                    <p class="text-gray-500 text-sm">Escorting high-value individuals and providing overwatch during server events.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="requirements" class="py-20 px-6 relative z-10 bg-[#080808] border-y border-gray-900">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="text-3xl text-white mb-10 tech-font"><span class="text-red-600">///</span> RECRUITMENT PROTOCOL</h2>
+            
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+                <div class="bg-zinc-900 p-6 border border-zinc-800">
+                    <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-brands fa-discord text-[#5865F2]"></i> Communication</h3>
+                    <p class="text-gray-400 text-sm">Must have Discord and a working microphone. Communication is key to our tactics.</p>
+                </div>
+
+                <div class="bg-zinc-900 p-6 border border-zinc-800">
+                    <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-crosshairs text-red-500"></i> Combat Skill</h3>
+                    <p class="text-gray-400 text-sm">Must pass a combat evaluation. We look for aim, movement, and game sense.</p>
+                </div>
+
+                <div class="bg-zinc-900 p-6 border border-zinc-800">
+                    <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-yellow-500"></i> Discipline</h3>
+                    <p class="text-gray-400 text-sm">Zero tolerance for toxicity. You represent the SAS division at all times.</p>
+                </div>
+
+                 <div class="bg-zinc-900 p-6 border border-zinc-800">
+                    <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-id-card text-blue-500"></i> Activity</h3>
+                    <p class="text-gray-400 text-sm">Active participation in SLR is required. Inactive members are discharged.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 relative z-10 flex items-center justify-center bg-black">
+        <div class="relative z-10 text-center max-w-2xl reveal">
+            <h2 class="text-4xl md:text-5xl text-white mb-6 tech-font">READY TO DEPLOY?</h2>
+            <p class="text-gray-400 mb-8 text-sm md:text-base">
+                Join the Discord to begin your application process. <br>
+                Do not ask for ranks. Earn them.
+            </p>
+            <a href="https://discord.gg/ZRbjcEJw9E" target="_blank" class="inline-block bg-[#5865F2] hover:bg-[#4752C4] text-white text-lg font-bold py-4 px-12 rounded shadow-lg transition-transform transform hover:scale-105">
+                JOIN DISCORD SERVER
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-black border-t border-gray-900 py-8 text-center text-gray-600 text-xs pb-16">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="brand-font text-lg text-white">SAS <span class="text-red-600">SLR</span></div>
+            <div class="tracking-widest">&copy; 2026 SPECIAL AIR SERVICE.</div>
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-roblox text-xl"></i></a>
+                <a href="https://discord.gg/ZRbjcEJw9E" class="text-[#5865F2] hover:text-white transition-colors"><i class="fa-brands fa-discord text-xl"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0;
+        let mouseY = 0;
+        let cursorX = 0;
+        let cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            const dx = mouseX - cursorX;
+            const dy = mouseY - cursorY;
+            
+            cursorX += dx * 0.2; 
+            cursorY += dy * 0.2;
+
+            cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+            
+            requestAnimationFrame(animateCursor);
+        }
+        
+        animateCursor();
+
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            const elementVisible = 50;
+
+            revealElements.forEach((reveal) => {
+                const elementTop = reveal.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); 
+    </script>
+</body>
+</html>
