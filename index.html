@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS | SPECIAL AIR SERVICE</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sas-blue: #3b82f6;
+            --sas-gold: #fbbf24;
+            --tactical-black: #0a0a0a;
+            --steel-gray: #1f2937;
+        }
+
+        body {
+            background-color: var(--tactical-black);
+            color: #e5e7eb;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Black Ops One', cursive;
+            letter-spacing: 0.1em;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--sas-blue);
+            border-radius: 4px;
+        }
+
+        /* --- HUD Overlay Effect --- */
+        .hud-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hud-corner {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .top-left { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        /* --- Animations --- */
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse-border {
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            animation: pulse-blue 2s infinite;
+        }
+
+        @keyframes pulse-blue {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        .glitch-text {
+            position: relative;
+        }
+        
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--tactical-black);
+            opacity: 0.8;
+        }
+        
+        .glitch-text::before {
+            color: #0ff;
+            z-index: -1;
+            transform: translate(-2px, 0);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            color: #f0f;
+            z-index: -2;
+            transform: translate(2px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        /* --- Component Styles --- */
+        .stat-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--sas-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        .discord-btn {
+            background: #5865F2;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .discord-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .discord-btn:hover::before {
+            left: 100%;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HUD Elements -->
+    <div class="hud-grid"></div>
+    <div class="hud-corner top-left"></div>
+    <div class="hud-corner bottom-right"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center bg-black/80 backdrop-blur-md border-b border-blue-900/30">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-shield-halved text-blue-500 text-2xl"></i>
+            <span class="brand-font text-2xl text-white tracking-wider">SAS <span class="text-blue-500 text-xs font-sans align-top ml-1">SLR DIVISION</span></span>
+        </div>
+        <div class="hidden md:flex gap-8 font-bold text-sm tracking-widest text-gray-400">
+            <a href="#intel" class="hover:text-blue-400 transition-colors">INTEL</a>
+            <a href="#roster" class="hover:text-blue-400 transition-colors">OPERATORS</a>
+            <a href="#protocol" class="hover:text-blue-400 transition-colors">PROTOCOL</a>
+        </div>
+        <a href="https://discord.gg/ZRbjcEJw9E" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-sm font-bold text-sm tracking-wider transition-colors">
+            ENLIST
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1595590424283-b8f17842773f?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-30 grayscale contrast-125" alt="Tactical Background">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <div class="inline-block border border-blue-500/50 bg-blue-500/10 px-4 py-1 mb-6 rounded text-blue-400 text-xs font-bold tracking-[0.3em] fade-in-up" style="animation-delay: 0.2s;">
+                SOUTH LONDON REMASTERED
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl lg:text-9xl mb-4 text-white glitch-text fade-in-up" data-text="SPECIAL AIR SERVICE" style="animation-delay: 0.4s;">
+                SPECIAL AIR SERVICE
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto font-light fade-in-up" style="animation-delay: 0.6s;">
+                The MET keeps the peace. We finish the war. <br>
+                <span class="text-blue-500 font-bold">Precision. Dominance. Elite Status.</span>
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 justify-center items-center fade-in-up" style="animation-delay: 0.8s;">
+                <a href="https://discord.gg/ZRbjcEJw9E" target="_blank" class="discord-btn px-10 py-4 rounded text-white font-bold tracking-widest flex items-center gap-3 shadow-lg shadow-blue-900/20">
+                    <i class="fa-brands fa-discord text-xl"></i> JOIN THE UNIT
+                </a>
+                <a href="#intel" class="border border-gray-600 hover:border-blue-500 text-gray-300 hover:text-white px-10 py-4 rounded font-bold tracking-widest transition-all">
+                    READ BRIEFING
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Intel / Comparison Section -->
+    <section id="intel" class="py-24 px-6 relative z-10 bg-zinc-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="reveal">
+                    <h2 class="text-4xl md:text-5xl text-white mb-8 border-l-4 border-blue-600 pl-6">
+                        SUPERIORITY <br><span class="text-blue-600">CONFIRMED.</span>
+                    </h2>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                        The Metropolitan Police (MET) is designed for the masses. The <strong class="text-white">SAS</strong> is built for the elite. We operate where standard enforcement fails.
+                    </p>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        In South London Remastered, numbers don't matter—skill does. Our division is strictly curated. We don't recruit cannon fodder; we recruit predators.
+                    </p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-4 text-gray-300">
+                            <i class="fa-solid fa-crosshairs text-blue-500"></i> Best aimers in the server
+                        </li>
+                        <li class="flex items-center gap-4 text-gray-300">
+                            <i class="fa-solid fa-crown text-yellow-500"></i> Higher status than MET
+                        </li>
+                        <li class="flex items-center gap-4 text-gray-300">
+                            <i class="fa-solid fa-user-secret text-blue-500"></i> Home to famous SLR players
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 reveal">
+                    <div class="stat-card p-6 rounded-lg text-center">
+                        <i class="fa-solid fa-person-rifle text-4xl text-blue-500 mb-4"></i>
+                        <h3 class="text-2xl text-white mb-2">ELITE</h3>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest">Tier 1 Operators</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-lg text-center bg-blue-900/10 border-blue-500/30">
+                        <i class="fa-solid fa-bullseye text-4xl text-white mb-4"></i>
+                        <h3 class="text-2xl text-white mb-2">100%</h3>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest">Accuracy Rating</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-lg text-center col-span-2">
+                        <i class="fa-solid fa-skull text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-2xl text-white mb-2">LETHAL FORCE</h3>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest">Authorized</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protocol / Rules Section -->
+    <section id="protocol" class="py-24 px-6 relative z-10 bg-zinc-900 border-y border-zinc-800">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <div class="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 mb-4 rounded">OPERATIONAL GUIDELINES</div>
+            <h2 class="text-4xl text-white mb-12">THE CODE OF CONDUCT</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8 text-left">
+                <!-- Rule 1 -->
+                <div class="bg-black/40 p-8 rounded border-t-2 border-blue-600 hover:bg-black/60 transition-colors">
+                    <div class="text-5xl font-black text-zinc-800 mb-4 absolute -mt-12 ml-48 opacity-50">01</div>
+                    <h3 class="text-xl text-white mb-4 relative z-10"><i class="fa-solid fa-ban text-red-500 mr-2"></i> NO RK'ing</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed relative z-10">
+                        We are professionals, not bandits. Do not Random Kill (RK) innocent civilians. We engage threats, we don't create chaos without cause.
+                    </p>
+                </div>
+
+                <!-- Rule 2 -->
+                <div class="bg-black/40 p-8 rounded border-t-2 border-blue-600 hover:bg-black/60 transition-colors">
+                    <div class="text-5xl font-black text-zinc-800 mb-4 absolute -mt-12 ml-48 opacity-50">02</div>
+                    <h3 class="text-xl text-white mb-4 relative z-10"><i class="fa-solid fa-briefcase text-blue-500 mr-2"></i> PROFESSIONAL</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed relative z-10">
+                        Maintain composure. Represent the SAS tag with dignity. We don't spam, we don't whine. We execute the mission.
+                    </p>
+                </div>
+
+                <!-- Rule 3 -->
+                <div class="bg-black/40 p-8 rounded border-t-2 border-blue-600 hover:bg-black/60 transition-colors">
+                    <div class="text-5xl font-black text-zinc-800 mb-4 absolute -mt-12 ml-48 opacity-50">03</div>
+                    <h3 class="text-xl text-white mb-4 relative z-10"><i class="fa-solid fa-scale-balanced text-yellow-500 mr-2"></i> FREEDOM</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed relative z-10">
+                        Unlike the MET, we don't bury you in paperwork or useless protocols. Use your common sense. If they shoot, drop them.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join CTA -->
+    <section class="py-32 px-6 relative z-10 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-blue-900/10"></div>
+        <!-- Animated Background Lines -->
+        <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #000 25%, #000 75%, #000 75%, #000); background-position: 0 0, 10px 10px; background-size: 20px 20px;"></div>
+
+        <div class="relative z-10 text-center max-w-2xl reveal">
+            <i class="fa-brands fa-discord text-6xl text-[#5865F2] mb-8 animate-bounce"></i>
+            <h2 class="text-4xl md:text-6xl text-white mb-6 brand-font">READY TO DEPLOY?</h2>
+            <p class="text-gray-300 mb-10 text-lg">
+                Join the most feared division in South London Remastered. <br>
+                Verification required. Serious inquiries only.
+            </p>
+            <a href="https://discord.gg/ZRbjcEJw9E" target="_blank" class="inline-block bg-[#5865F2] hover:bg-[#4752C4] text-white text-xl font-bold py-5 px-12 rounded shadow-2xl shadow-blue-500/20 transform hover:scale-105 transition-all">
+                JOIN SAS DISCORD
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-zinc-900 py-8 text-center text-gray-600 text-sm">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="brand-font text-xl text-zinc-400">SAS <span class="text-blue-900">SLR</span></div>
+            <div>&copy; 2026 Special Air Service - South London Remastered.</div>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-white"><i class="fa-brands fa-roblox text-xl"></i></a>
+                <a href="https://discord.gg/ZRbjcEJw9E" class="hover:text-white"><i class="fa-brands fa-discord text-xl"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Reveal on Scroll Animation
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            const elementVisible = 100;
+
+            revealElements.forEach((reveal) => {
+                const elementTop = reveal.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Trigger once on load
+    </script>
+</body>
+</html>
